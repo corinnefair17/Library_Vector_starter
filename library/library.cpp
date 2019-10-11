@@ -18,6 +18,7 @@ using namespace std;
  * then reload them from disk 
  */
 void reloadAllData(){
+	// TODO
 
 }
 
@@ -42,6 +43,7 @@ void reloadAllData(){
  *         TOO_MANY_OUT patron has the max number of books allowed checked out
  */
 int checkout(int bookid, int patronid){
+	// TODO
 	return SUCCESS;
 }
 
@@ -58,6 +60,7 @@ int checkout(int bookid, int patronid){
  * 		   BOOK_NOT_IN_COLLECTION
  */
 int checkin(int bookid){
+	// TODO
 	return SUCCESS;
 }
 
@@ -71,6 +74,7 @@ int checkin(int bookid){
  *    the patron_id of the person added
  */
 int enroll(std::string &name){
+	// TODO
 	return 0;
 }
 
@@ -80,6 +84,7 @@ int enroll(std::string &name){
  * 
  */
 int numbBooks(){
+	// TODO
 	return 0;
 }
 
@@ -88,6 +93,7 @@ int numbBooks(){
  * (ie. if 3 patrons returns 3)
  */
 int numbPatrons(){
+	// TODO
 	return 0;
 }
 
@@ -97,6 +103,7 @@ int numbPatrons(){
  *        or PATRON_NOT_ENROLLED         
  */
 int howmanybooksdoesPatronHaveCheckedOut(int patronid){
+	// TODO
 	return 0;
 }
 
@@ -107,6 +114,7 @@ int howmanybooksdoesPatronHaveCheckedOut(int patronid){
  *         PATRON_NOT_ENROLLED no patron with this patronid
  */
 int whatIsPatronName(std::string &name,int patronid){
+	// TODO
 	return SUCCESS;
 }
 

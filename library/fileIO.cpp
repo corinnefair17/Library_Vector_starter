@@ -7,6 +7,7 @@ using namespace std;
  * */
 int loadBooks(std::vector<book> &books, const char* filename)
 {
+	// TODO
 	return SUCCESS;
 }
 
@@ -17,6 +18,7 @@ int loadBooks(std::vector<book> &books, const char* filename)
  * */
 int saveBooks(std::vector<book> &books, const char* filename)
 {
+	// TODO
 	return SUCCESS;
 }
 
@@ -27,6 +29,7 @@ int saveBooks(std::vector<book> &books, const char* filename)
  * */
 int loadPatrons(std::vector<patron> &patrons, const char* filename)
 {
+	// TODO
 	return SUCCESS;
 }
 
@@ -37,5 +40,6 @@ int loadPatrons(std::vector<patron> &patrons, const char* filename)
  * */
 int savePatrons(std::vector<patron> &patrons, const char* filename)
 {
+	// TODO
 	return SUCCESS;
 }
