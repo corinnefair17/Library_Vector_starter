@@ -56,13 +56,13 @@ int checkout(int bookid, int patronid) {
 	int bookIndex = -1;
 	int patronIndex = -1;
 
-	for (int i = 0; i < books.size(); i++) {
+	for (int i = 0; i < nextBookID; i++) {
 		if (books[i].book_id == bookid) {
 			bookIndex = i;
 		}
 	}
 
-	for (int i = 0; i < patrons.size(); i++) {
+	for (int i = 0; i < nextPatronID; i++) {
 		if (patrons[i].patron_id == patronid) {
 			patronIndex = i;
 		}
@@ -100,7 +100,7 @@ int checkin(int bookid) {
 
 	int bookIndex = -1;
 
-	for (int i = 0; i < books.size(); i++) {
+	for (int i = 0; i < nextBookID; i++) {
 		if (books[i].book_id == bookid) {
 			bookIndex = i;
 		}
@@ -113,7 +113,7 @@ int checkin(int bookid) {
 	int patronid = -1;
 	int patronIndex = -1;
 
-	for (int i = 0; i < patrons.size(); i++) {
+	for (int i = 0; i < nextPatronID; i++) {
 		if (patrons[i].patron_id == patronid) {
 			patronIndex = i;
 		}
@@ -172,11 +172,11 @@ int numbPatrons() {
 int howmanybooksdoesPatronHaveCheckedOut(int patronid) {
 	int total = 0;
 
-	for (int i = 0; i < patrons.size(); i++) {
+	for (int i = 0; i < nextPatronID; i++) {
 		total += patrons[i].number_books_checked_out;
 	}
 
-	if (patrons.size() == 0) {
+	if (nextPatronID == 0) {
 		return PATRON_NOT_ENROLLED;
 	}
 
@@ -190,7 +190,7 @@ int howmanybooksdoesPatronHaveCheckedOut(int patronid) {
  *         PATRON_NOT_ENROLLED no patron with this patronid
  */
 int whatIsPatronName(std::string &name, int patronid) {
-	for (int i = 0; i < patrons.size(); i++) {
+	for (int i = 0; i < nextPatronID; i++) {
 		if (patrons[i].patron_id == patronid && patrons[i].name == name) {
 			return SUCCESS;
 		}
