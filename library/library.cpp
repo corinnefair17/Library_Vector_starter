@@ -49,6 +49,37 @@ void reloadAllData(){
  */
 int checkout(int bookid, int patronid){
 	// TODO
+	reloadAllData();
+
+	int bookIndex = -1;
+	int patronIndex = -1;
+
+	for (int i = 0; i < books.size(); i++) {
+		if (books[i].book_id == bookid) {
+			bookIndex = i;
+		}
+	}
+
+	for (int i = 0; i < patrons.size(); i++) {
+		if (patrons[i].patron_id == patronid) {
+			patronIndex = i;
+		}
+	}
+
+	if (bookIndex == -1) {
+		return BOOK_NOT_IN_COLLECTION;
+	}
+	else if (patronIndex == -1) {
+		return PATRON_NOT_ENROLLED;
+	}
+	else if (patrons[patronIndex].number_books_checked_out == MAX_BOOKS_ALLOWED_OUT) {
+		return TOO_MANY_OUT;
+	}
+	else {
+		patrons[patronIndex].number_books_checked_out++;
+		books[bookIndex].state = OUT;
+		books[bookIndex].loaned_to_patron_id = patrons[patronIndex].patron_id;
+	}
 	return SUCCESS;
 }
 
