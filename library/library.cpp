@@ -16,6 +16,9 @@ using namespace std;
 std::vector<book> books;
 std::vector<patron> patrons;
 
+int nextBookID;
+int nextPatronID;
+
 /*
  * clear books and patrons containers
  * then reload them from disk 
@@ -93,7 +96,6 @@ int checkout(int bookid, int patronid) {
  * 		   BOOK_NOT_IN_COLLECTION
  */
 int checkin(int bookid) {
-	// TODO
 	reloadAllData();
 
 	int bookIndex = -1;
@@ -134,8 +136,15 @@ int checkin(int bookid) {
  *    the patron_id of the person added
  */
 int enroll(std::string &name) {
-	// TODO
-	return 0;
+	patron p;
+	p.name = name;
+	p.number_books_checked_out = 0;
+	p.patron_id = nextPatronID;
+	nextPatronID++;
+
+	patrons.push_back(p);
+
+	return p.patron_id;
 }
 
 /*
@@ -144,8 +153,7 @@ int enroll(std::string &name) {
  * 
  */
 int numbBooks() {
-	// TODO
-	return 0;
+	return nextBookID;
 }
 
 /*
@@ -153,8 +161,7 @@ int numbBooks() {
  * (ie. if 3 patrons returns 3)
  */
 int numbPatrons() {
-	// TODO
-	return 0;
+	return nextPatronID;
 }
 
 /*the number of books patron has checked out
@@ -163,8 +170,17 @@ int numbPatrons() {
  *        or PATRON_NOT_ENROLLED         
  */
 int howmanybooksdoesPatronHaveCheckedOut(int patronid) {
-	// TODO
-	return 0;
+	int total = 0;
+
+	for (int i = 0; i < patrons.size(); i++) {
+		total += patrons[i].number_books_checked_out;
+	}
+
+	if (patrons.size() == 0) {
+		return PATRON_NOT_ENROLLED;
+	}
+
+	return total;
 }
 
 /* search through patrons container to see if patronid is there
@@ -174,7 +190,11 @@ int howmanybooksdoesPatronHaveCheckedOut(int patronid) {
  *         PATRON_NOT_ENROLLED no patron with this patronid
  */
 int whatIsPatronName(std::string &name, int patronid) {
-	// TODO
-	return SUCCESS;
+	for (int i = 0; i < patrons.size(); i++) {
+		if (patrons[i].patron_id == patronid && patrons[i].name == name) {
+			return SUCCESS;
+		}
+	}
+	return PATRON_NOT_ENROLLED;
 }
 
