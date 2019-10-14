@@ -15,7 +15,7 @@ int loadBooks(std::vector<book> &books, const char *filename) {
 		return COULD_NOT_OPEN_FILE;
 	}
 
-	else if (books.size() == 0) {
+	else if (myfile.peek() == std::ifstream::traits_type::eof()) {
 		return NO_BOOKS_IN_LIBRARY;
 	}
 
@@ -23,21 +23,22 @@ int loadBooks(std::vector<book> &books, const char *filename) {
 
 	// TODO
 	std::string line;
-	while (!myfile.eof()) {
+	while (myfile.peek() != std::ifstream::traits_type::eof()) {
 		getline(myfile, line);
 		std::stringstream ss(line);
-		std::vector<std::string> svector;
+		std::vector<std::string> lineVector;
 
 		while (ss.good()) {
 			string substr;
 			getline(ss, substr, ',');
-			svector.push_back(substr);
+
+			lineVector.push_back(substr);
 		}
 		book b;
-		b.book_id = std::stoi(svector[0]);
-		b.title = svector[1];
-		b.author = svector[2];
-		switch (std::stoi(svector[3])) {
+		b.book_id = std::atoi(lineVector[0].c_str());
+		b.title = lineVector[1];
+		b.author = lineVector[2];
+		switch (std::atoi(lineVector[3].c_str())) {
 		case 0:
 			b.state = UNKNOWN;
 			break;
@@ -52,10 +53,11 @@ int loadBooks(std::vector<book> &books, const char *filename) {
 			break;
 		}
 
-		if (svector[4] == "-2") {
+		if (lineVector[4].compare("-2 ") == 0
+				|| lineVector[4].compare("-2") == 0) {
 			b.loaned_to_patron_id = NO_ONE;
 		} else {
-			b.loaned_to_patron_id = std::stoi(svector[4]);
+			b.loaned_to_patron_id = std::atoi(lineVector[4].c_str());
 		}
 		books.push_back(b);
 	}
@@ -79,8 +81,8 @@ int saveBooks(std::vector<book> &books, const char *filename) {
 		return NO_BOOKS_IN_LIBRARY;
 	}
 
-	// TODO
-	signed int length = books.size();
+// TODO
+	int length = books.size();
 	for (int i = 0; i < length; i++) {
 		myfile << books[i].book_id << "," << books[i].title << ","
 				<< books[i].author << "," << books[i].state << ","
@@ -102,11 +104,31 @@ int loadPatrons(std::vector<patron> &patrons, const char *filename) {
 		return COULD_NOT_OPEN_FILE;
 	}
 
-	else if (patrons.size() == 0) {
+	else if (myfile.peek() == std::ifstream::traits_type::eof()) {
 		return NO_PATRONS_IN_LIBRARY;
 	}
 
-	// TODO
+	patrons.clear();
+
+// TODO
+	std::string line;
+	while (myfile.peek() != std::ifstream::traits_type::eof()) {
+		getline(myfile, line);
+		std::stringstream ss(line);
+		std::vector<std::string> svector;
+
+		while (ss.good()) {
+			string substr;
+			getline(ss, substr, ',');
+			svector.push_back(substr);
+		}
+		patron p;
+		p.patron_id = std::atoi(svector[0].c_str());
+		p.name = svector[1];
+		p.number_books_checked_out = std::stoi(svector[2]);
+	}
+	myfile.close();
+
 	return SUCCESS;
 }
 
@@ -126,6 +148,21 @@ int savePatrons(std::vector<patron> &patrons, const char *filename) {
 		return NO_BOOKS_IN_LIBRARY;
 	}
 
-	// TODO
+// TODO
+	int length = patrons.size();
+	for (int i = 0; i < length; i++) {
+		myfile << patrons[i].patron_id << "," << patrons[i].name << ","
+				<< patrons[i].number_books_checked_out << std::endl;
+	}
+	myfile.close();
+
 	return SUCCESS;
+}
+
+// For testing
+int main() {
+	std::vector<book> books;
+
+	loadBooks(books, BOOKFILE.c_str());
+	saveBooks(books, TMP_FILE.c_str());
 }

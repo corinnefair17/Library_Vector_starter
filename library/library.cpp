@@ -16,8 +16,8 @@ using namespace std;
 std::vector<book> books;
 std::vector<patron> patrons;
 
-signed int nextBookID;
-signed int nextPatronID;
+int nextBookID;
+int nextPatronID;
 
 /*
  * clear books and patrons containers
