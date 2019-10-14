@@ -21,7 +21,6 @@ int loadBooks(std::vector<book> &books, const char *filename) {
 
 	books.clear();
 
-	// TODO
 	std::string line;
 	while (myfile.peek() != std::ifstream::traits_type::eof()) {
 		getline(myfile, line);
@@ -81,7 +80,6 @@ int saveBooks(std::vector<book> &books, const char *filename) {
 		return NO_BOOKS_IN_LIBRARY;
 	}
 
-// TODO
 	int length = books.size();
 	for (int i = 0; i < length; i++) {
 		myfile << books[i].book_id << "," << books[i].title << ","
@@ -110,25 +108,26 @@ int loadPatrons(std::vector<patron> &patrons, const char *filename) {
 
 	patrons.clear();
 
-// TODO
 	std::string line;
 	while (myfile.peek() != std::ifstream::traits_type::eof()) {
 		getline(myfile, line);
 		std::stringstream ss(line);
-		std::vector<std::string> svector;
+		std::vector<std::string> lineVector;
 
 		while (ss.good()) {
-			string substr;
+			std::string substr;
 			getline(ss, substr, ',');
-			svector.push_back(substr);
+			lineVector.push_back(substr);
 		}
 		patron p;
-		p.patron_id = std::atoi(svector[0].c_str());
-		p.name = svector[1];
-		p.number_books_checked_out = std::stoi(svector[2]);
+		p.patron_id = std::atoi(lineVector[0].c_str());
+		p.name = lineVector[1];
+		p.number_books_checked_out = std::atoi(lineVector[2].c_str());
+
+		patrons.push_back(p);
+
 	}
 	myfile.close();
-
 	return SUCCESS;
 }
 
@@ -141,14 +140,15 @@ int savePatrons(std::vector<patron> &patrons, const char *filename) {
 	std::ofstream myfile;
 	myfile.open(filename);
 	if (myfile.fail()) {
+		std::cout << "A" << std::endl;
 		return COULD_NOT_OPEN_FILE;
 	}
 
 	else if (patrons.size() == 0) {
+		std::cout << "B" << std::endl;
 		return NO_BOOKS_IN_LIBRARY;
 	}
 
-// TODO
 	int length = patrons.size();
 	for (int i = 0; i < length; i++) {
 		myfile << patrons[i].patron_id << "," << patrons[i].name << ","
@@ -160,9 +160,9 @@ int savePatrons(std::vector<patron> &patrons, const char *filename) {
 }
 
 // For testing
-int main() {
-	std::vector<book> books;
-
-	loadBooks(books, BOOKFILE.c_str());
-	saveBooks(books, TMP_FILE.c_str());
-}
+//int main() {
+//	std::vector<patron> patrons;
+//
+//	loadPatrons(patrons, PATRONFILE.c_str());
+//	savePatrons(patrons, TMP_FILE.c_str());
+//}

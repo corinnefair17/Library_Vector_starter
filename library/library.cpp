@@ -28,6 +28,18 @@ void reloadAllData() {
 	patrons.clear();
 	loadBooks(books, BOOKFILE.c_str());
 	loadPatrons(patrons, PATRONFILE.c_str());
+
+	if (books.size() == 0) {
+		nextBookID = 0;
+	} else {
+		nextBookID = books[books.size() - 1].book_id + 1;
+	}
+
+	if (patrons.size() == 0) {
+		nextPatronID = 0;
+	} else {
+		nextPatronID = patrons[patrons.size() - 1].patron_id + 1;
+	}
 }
 
 /* checkout a book to a patron
@@ -53,32 +65,19 @@ void reloadAllData() {
 int checkout(int bookid, int patronid) {
 	reloadAllData();
 
-	int bookIndex = -1;
-	int patronIndex = -1;
-
-	for (int i = 0; i < nextBookID; i++) {
-		if (books[i].book_id == bookid) {
-			bookIndex = i;
-		}
-	}
-
-	for (int i = 0; i < nextPatronID; i++) {
-		if (patrons[i].patron_id == patronid) {
-			patronIndex = i;
-		}
-	}
-
-	if (bookIndex == -1) {
+	if (bookid >= numbBooks() || bookid < 0) {
 		return BOOK_NOT_IN_COLLECTION;
-	} else if (patronIndex == -1) {
+	} else if (patronid >= numbPatrons() || patronid < 0) {
 		return PATRON_NOT_ENROLLED;
-	} else if (patrons[patronIndex].number_books_checked_out
+	} else if (patrons[patronid].number_books_checked_out
 			== MAX_BOOKS_ALLOWED_OUT) {
 		return TOO_MANY_OUT;
 	} else {
-		patrons[patronIndex].number_books_checked_out++;
-		books[bookIndex].state = OUT;
-		books[bookIndex].loaned_to_patron_id = patrons[patronIndex].patron_id;
+		patrons[patronid].number_books_checked_out++;
+		books[bookid].state = OUT;
+		books[bookid].loaned_to_patron_id = patronid;
+		savePatrons(patrons, PATRONFILE.c_str());
+		saveBooks(books, BOOKFILE.c_str());
 	}
 	return SUCCESS;
 }
@@ -98,30 +97,15 @@ int checkout(int bookid, int patronid) {
 int checkin(int bookid) {
 	reloadAllData();
 
-	int bookIndex = -1;
-
-	for (int i = 0; i < nextBookID; i++) {
-		if (books[i].book_id == bookid) {
-			bookIndex = i;
-		}
-	}
-
-	if (bookIndex == -1) {
+	if (bookid >= numbBooks() || bookid < 0) {
 		return BOOK_NOT_IN_COLLECTION;
 	}
 
-	int patronid = -1;
-	int patronIndex = -1;
-
-	for (int i = 0; i < nextPatronID; i++) {
-		if (patrons[i].patron_id == patronid) {
-			patronIndex = i;
-		}
-	}
-
-	patrons[patronIndex].number_books_checked_out--;
-	books[bookIndex].loaned_to_patron_id = NO_ONE;
-	books[bookIndex].state = IN;
+	patrons[books[bookid].loaned_to_patron_id].number_books_checked_out--;
+	books[bookid].loaned_to_patron_id = NO_ONE;
+	books[bookid].state = IN;
+	savePatrons(patrons, PATRONFILE.c_str());
+	saveBooks(books, BOOKFILE.c_str());
 
 	return SUCCESS;
 }
@@ -136,13 +120,15 @@ int checkin(int bookid) {
  *    the patron_id of the person added
  */
 int enroll(std::string &name) {
+	reloadAllData();
 	patron p;
 	p.name = name;
 	p.number_books_checked_out = 0;
-	p.patron_id = nextPatronID;
+	p.patron_id = numbPatrons();
 	nextPatronID++;
 
 	patrons.push_back(p);
+	savePatrons(patrons, PATRONFILE.c_str());
 
 	return p.patron_id;
 }
@@ -153,6 +139,7 @@ int enroll(std::string &name) {
  * 
  */
 int numbBooks() {
+	reloadAllData();
 	return nextBookID;
 }
 
@@ -161,6 +148,7 @@ int numbBooks() {
  * (ie. if 3 patrons returns 3)
  */
 int numbPatrons() {
+	reloadAllData();
 	return nextPatronID;
 }
 
@@ -170,17 +158,13 @@ int numbPatrons() {
  *        or PATRON_NOT_ENROLLED         
  */
 int howmanybooksdoesPatronHaveCheckedOut(int patronid) {
-	int total = 0;
-
-	for (int i = 0; i < nextPatronID; i++) {
-		total += patrons[i].number_books_checked_out;
-	}
-
-	if (nextPatronID == 0) {
+	if (patronid >= numbPatrons() || patronid < 0) {
 		return PATRON_NOT_ENROLLED;
 	}
 
-	return total;
+	reloadAllData();
+
+	return patrons[patronid].number_books_checked_out;
 }
 
 /* search through patrons container to see if patronid is there
@@ -190,11 +174,11 @@ int howmanybooksdoesPatronHaveCheckedOut(int patronid) {
  *         PATRON_NOT_ENROLLED no patron with this patronid
  */
 int whatIsPatronName(std::string &name, int patronid) {
-	for (int i = 0; i < nextPatronID; i++) {
-		if (patrons[i].patron_id == patronid && patrons[i].name == name) {
-			return SUCCESS;
-		}
+	// reloadAllData();
+	if (patrons[patronid].name.compare(name) == 0) {
+		return SUCCESS;
 	}
+
 	return PATRON_NOT_ENROLLED;
 }
 
